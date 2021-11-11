@@ -9,6 +9,12 @@
 </head>
 
 <body>
+    <% if(day === 'Saturday' || day === 'Sunday'){ %>
+        <h1 style="color: purple"><%= day %>'s List</h1>
+    <% } else { %>
+        <h1 style="color: blue"><%= day %>'s List</h1>
+    <% } %>
+    
 
 </body>
 

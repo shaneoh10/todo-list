@@ -3,11 +3,14 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+app.set('view engine', 'ejs');
+
 app.get('/', function(req, res){
     let today = new Date();
-
-    const greeting = today.getDay() === 6 || today.getDay === 0 ? 'Weekend' : 'Not weekend';
-    res.send(greeting);
+    const day = days[today.getDay()];
+    res.render('list', {day: day});
 });
 
 app.listen(3000, function(){
