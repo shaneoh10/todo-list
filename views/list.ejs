@@ -6,15 +6,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo List</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
-    <% if(day === 'Saturday' || day === 'Sunday'){ %>
-        <h1 style="color: purple"><%= day %>'s List</h1>
-    <% } else { %>
-        <h1 style="color: blue"><%= day %>'s List</h1>
-    <% } %>
+    <h1><%= date %></h1>
+
+    <ul>
+        <% for(let i = 0; i < newItems.length; i++){ %>
+            <li><%= newItems[i] %></li>
+        <% } %>
+    </ul>
     
+    <form action="/" method="POST">
+
+        <input type="text" name="newItem">
+
+        <button type="submit">Add Item</button>
+
+    </form>
 
 </body>
 
