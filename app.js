@@ -41,11 +41,7 @@ const item3 = new Item({
 const defaultItems = [item1, item2, item3];
 
 
-
-
-
-
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     let day = date.getDate();
 
     Item.find({}, (err, foundItems) => {
@@ -65,26 +61,38 @@ app.get('/', function (req, res) {
 
 });
 
-app.post('/', function (req, res) {
-    let item = req.body.newItem;
+app.post('/', (req, res) => {
+    let itemName = req.body.newItem;
 
-    if (req.body.list === 'Work') {
-        workItems.push(item)
-        res.redirect('/work');
-    } else {
-        newItems.push(item);
-        res.redirect('/');
-    }
-})
+    const item = new Item({
+        name: itemName
+    });
 
-app.get('/work', function (req, res) {
+    item.save();
+    res.redirect('/');
+});
+
+app.post('/delete', (req, res) => {
+    const checkedItemId = req.body.checkbox;
+
+    Item.findByIdAndRemove(checkedItemId, (err) => {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log("Successfully deleted item.")
+            res.redirect('/');
+        }
+    });
+});
+
+app.get('/work', (req, res) => {
     res.render('list', { title: 'Work List', newItems: workItems });
 });
 
-app.get('/about', function (req, res) {
+app.get('/about', (req, res) => {
     res.render('about');
 });
 
-app.listen(3000, function () {
+app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
