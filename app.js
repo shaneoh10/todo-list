@@ -40,6 +40,13 @@ const item3 = new Item({
 
 const defaultItems = [item1, item2, item3];
 
+const listSchema = {
+    name: String,
+    items: [itemSchema]
+}
+
+const List = mongoose.model('List', listSchema);
+
 
 app.get('/', (req, res) => {
     let day = date.getDate();
@@ -61,32 +68,60 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('/:customListName', (req, res) => {
+    const customListName = req.params.customListName;
+
+    List.findOne({ name: customListName }, (err, foundList) => {
+        if (!err) {
+            if (!foundList) {
+                // Create a new list
+                const list = new List({
+                    name: customListName,
+                    items: defaultItems
+                });
+
+                list.save();
+                res.redirect('/' + customListName);
+            } else {
+                // Show existing list
+                res.render('list', { title: foundList.name, newItems: foundList.items });
+            }
+        }
+    });
+});
+
 app.post('/', (req, res) => {
+    let day = date.getDate();
     let itemName = req.body.newItem;
+    let listName = req.body.list;
 
     const item = new Item({
         name: itemName
     });
 
-    item.save();
-    res.redirect('/');
+    if(listName === day) {
+        item.save();
+        res.redirect('/');
+    } else {
+        List.findOne({name: listName}, (err, foundList) => {
+            foundList.items.push(item);
+            foundList.save();
+            res.redirect('/' + listName);
+        });
+    }
 });
 
 app.post('/delete', (req, res) => {
     const checkedItemId = req.body.checkbox;
 
     Item.findByIdAndRemove(checkedItemId, (err) => {
-        if(err) {
+        if (err) {
             console.log(err);
         } else {
             console.log("Successfully deleted item.")
             res.redirect('/');
         }
     });
-});
-
-app.get('/work', (req, res) => {
-    res.render('list', { title: 'Work List', newItems: workItems });
 });
 
 app.get('/about', (req, res) => {
